@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2.min.css"></link>
+<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"></link>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.min.css"></link>
+                          
+<style type="text/css">
+  
+	.node {
+    cursor: pointer;
+  }
+
+  .overlay{
+      background-color:#EEE;
+  }
+   
+  .node circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+  }
+   
+  .node text {
+    font-size:10px; 
+    font-family:sans-serif;
+  }
+   
+  .link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5px;
+  }
+
+  .templink {
+    fill: none;
+    stroke: red;
+    stroke-width: 3px;
+  }
+
+  .ghostCircle.show{
+      display:block;
+  }
+
+  .ghostCircle, .activeDrag .ghostCircle{
+       display: none;
+  }
+	/*Just to ensure the select2 box is "glued" to the top*/
+	.search {
+	  width: 25%; 
+	}
+  .explosion_level {
+	  width: 25%;
+	}
+
+/* collapsableCss */
+#demo {
+    -webkit-transition: width 2s ease;
+    -moz-transition: width 2s ease;
+    -o-transition: width 2s ease;
+    transition: width 2s ease;
+    
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    
+    vertical-align: middle;
+    line-height: 30px;
+    height: 30px;
+
+    width: 0px;
+}
+#demo.in {
+    width: 80%;
+}
+
+/* for scrolls */
+
+/* #style-1::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #F5F5F5;
+}
+
+#style-1::-webkit-scrollbar
+{
+	width: 12px;
+	background-color: #F5F5F5;
+}
+
+#style-1::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
+.scrollbar
+{
+	
+	float: left;
+	height: 100%;
+	width: 100%;
+	background: #F5F5F5;
+	overflow-y: scroll;
+  overflow-x: scroll;
+	margin-bottom: 25px;
+} */
+  
+.event-text {
+    
+    font-family: sans-serif;
+}
+.event-text-blue {
+    fill:#4286f4;
+    font-style: italic;
+  
+   
+    font-family: sans-serif;
+}
+</style>
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="/ejs.min.js"></script>
+<script>
+  var vPid = "<%=name%>"  ;
+  console.log("new value="+vPid);
+</script>
+<script src="/dndTree.js"></script>
+
+ <body >
+    <div id="tree-container" width="80%"></div>
+    
+  <button type="button" class="btn btn-primary btn-sm" 
+  data-toggle="toggle" data-target="#demo">
+<i class="glyphicon glyphicon-plus">+</i>
+</button>
+
+<div id="demo" class="">
+<div id="controls" class="cntrl">
+<label style="color:#35a9e8;margin-left:2%" > Child Item </label> : <div id="search" style="margin-left:1%"></div>
+<label style="color:#35a9e8;margin-left:2%" >Explosion Level</label>: <div id="explosion_level" style="margin-left:1%" ></div>
+<input style="margin-left:1.5%" type="button" id="btnHighlightCompliance" name="btnHighlightCompliance" value="Risk View" class="btn btn-outline-success btn-sm">
+<input style="margin-left:1.5%" type="button" id="btnHighlightTPSD" name="btnHighlightTPSD" value="TPS View" class="btn btn-outline-warning btn-sm">
+<input style="margin-left:1.5%" type="button" id="btnHighlightFails" name="btnHighlightFails" value="Failure Analysis" class="btn btn-outline-danger btn-sm">
+<input style="margin-left:1.5%" type="button" id="btnReset" name="btnReset" value="Reset" class="btn btn-outline-primary btn-sm">
+<input style="margin-left:1.5%" type="button" id="btnCost" name="btnCost" value="Cost" class="btn btn-outline-primary btn-sm">
+
+</div>
+</div>
+</body> 
+
+
+
+  <!-- <div id="controls" style="display:none">
+    <label style="color:#35a9e8">Child Item</label> : <div id="search"></div>&nbsp;<label style="color:#35a9e8">Explosion Level</label>: <div id="explosion_level"></div>
+    &nbsp;<input type="button" id="btnHighlightCompliance" name="btnHighlightCompliance" value="Risk View" class="btn btn-outline-success btn-sm">
+    &nbsp;<input type="button" id="btnHighlightTPSD" name="btnHighlightTPSD" value="TPS View" class="btn btn-outline-warning btn-sm">
+    &nbsp;<input type="button" id="btnReset" name="btnReset" value="Reset" class="btn btn-outline-primary btn-sm">
+  </div> -->
+
+  <!-- <body>
+    <div id="wrapper">
+      <div class="scrollbar" id="style-1">
+        <div id="tree-container" width="80%"></div>
+          
+        <button type="button" class="btn btn-primary btn-sm" 
+        data-toggle="toggle" data-target="#demo">
+      <i class="glyphicon glyphicon-plus">+</i>
+      </button>
+      
+      <div id="demo" class="">
+      <div id="controls" class="cntrl">
+      <label style="color:#35a9e8;margin-left:2%" > Child Item </label> : <div id="search" style="margin-left:1%"></div>
+      <label style="color:#35a9e8;margin-left:2%" >Explosion Level</label>: <div id="explosion_level" style="margin-left:1%" ></div>
+      <input style="margin-left:5%" type="button" id="btnHighlightCompliance" name="btnHighlightCompliance" value="Risk View" class="btn btn-outline-success btn-sm">
+      <input style="margin-left:5%" type="button" id="btnHighlightTPSD" name="btnHighlightTPSD" value="TPS View" class="btn btn-outline-warning btn-sm">
+      <input style="margin-left:5%" type="button" id="btnReset" name="btnReset" value="Reset" class="btn btn-outline-primary btn-sm">
+      </div>
+      </div>
+      </div>
+      </div>
+
+  </body> -->
+
+<script>
+  $("[data-toggle='toggle']").click(function() {
+    var selector = $(this).data("target");
+    $(selector).toggleClass('in');
+});
+</script>
+
+  </html>
