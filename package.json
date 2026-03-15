@@ -23,7 +23,7 @@
     "express": "^4.16.2",
     "flat-to-nested": "^1.1.0",
     "list-to-tree-lite": "^0.1.0",
-    "mongoose": "^5.0.7",
+    "mongoose": "^8.23.0",
     "shape-json": "^1.2.4"
   }
 }

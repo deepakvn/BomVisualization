@@ -1,12 +1,12 @@
 var mongoose = require('mongoose');
 var dbConfig = require('./config/database.config.js');
 
-mongoose.connect(dbConfig.url, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(dbConfig.url);
 var db = mongoose.connection;
 
 db.on('error', function(err) { console.error('Connection error:', err); process.exit(1); });
 
-db.once('open', function() {
+db.once('open', async function() {
     console.log('Connected to MongoDB');
 
     var Tree = require('./app/models/flatbom.model.js');
@@ -63,32 +63,29 @@ db.once('open', function() {
             { name: 'APAC-Sales', parent: 'Sales-Div', Risk_Level: 'compliant', cost: '$250K', TPSD: 'No' },
 
             // Level 3 - Sales regions
-            { name: 'US-East',   parent: 'NA-Sales', Risk_Level: 'compliant', cost: '$150K', TPSD: 'No' },
-            { name: 'US-West',   parent: 'NA-Sales', Risk_Level: 'compliant', cost: '$150K', TPSD: 'No' },
-            { name: 'Europe',    parent: 'EMEA-Sales', Risk_Level: 'compliant', cost: '$150K', TPSD: 'No' },
+            { name: 'US-East',     parent: 'NA-Sales',   Risk_Level: 'compliant',     cost: '$150K', TPSD: 'No' },
+            { name: 'US-West',     parent: 'NA-Sales',   Risk_Level: 'compliant',     cost: '$150K', TPSD: 'No' },
+            { name: 'Europe',      parent: 'EMEA-Sales', Risk_Level: 'compliant',     cost: '$150K', TPSD: 'No' },
             { name: 'Middle-East', parent: 'EMEA-Sales', Risk_Level: 'non-compliant', cost: '$100K', TPSD: 'No' },
-            { name: 'Japan',     parent: 'APAC-Sales', Risk_Level: 'compliant', cost: '$120K', TPSD: 'No' },
-            { name: 'ANZ',       parent: 'APAC-Sales', Risk_Level: 'compliant', cost: '$130K', TPSD: 'No' },
+            { name: 'Japan',       parent: 'APAC-Sales', Risk_Level: 'compliant',     cost: '$120K', TPSD: 'No' },
+            { name: 'ANZ',         parent: 'APAC-Sales', Risk_Level: 'compliant',     cost: '$130K', TPSD: 'No' },
         ]
     };
 
-    Tree.findById('TechVision-Corp', function(err, existing) {
-        if (err) { console.error(err); db.close(); return; }
-
+    try {
+        const existing = await Tree.findById('TechVision-Corp');
         if (existing) {
             console.log('Entry already exists. Updating...');
-            Tree.updateOne({ _id: 'TechVision-Corp' }, { children: dummyDoc.children }, function(err) {
-                if (err) console.error('Update error:', err);
-                else console.log('Updated successfully!');
-                db.close();
-            });
+            await Tree.updateOne({ _id: 'TechVision-Corp' }, { children: dummyDoc.children });
+            console.log('Updated successfully!');
         } else {
             var doc = new Tree(dummyDoc);
-            doc.save(function(err) {
-                if (err) console.error('Save error:', err);
-                else console.log('Dummy data inserted successfully!');
-                db.close();
-            });
+            await doc.save();
+            console.log('Dummy data inserted successfully!');
         }
-    });
+    } catch (err) {
+        console.error('Error:', err);
+    } finally {
+        db.close();
+    }
 });
