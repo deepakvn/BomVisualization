@@ -5,7 +5,23 @@
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.min.css"></link>
                           
 <style type="text/css">
-  
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  #bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: white;
+    padding: 4px 8px;
+  }
+
 	.node {
     cursor: pointer;
   }
@@ -64,8 +80,8 @@
     white-space: nowrap;
     
     vertical-align: middle;
-    line-height: 30px;
-    height: 30px;
+    line-height: normal;
+    height: auto;
 
     width: 0px;
 }
@@ -122,8 +138,7 @@
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
-<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 <script src="/ejs.min.js"></script>
 <script>
   var vPid = "<%=name%>"  ;
@@ -134,7 +149,8 @@
  <body >
     <div id="tree-container" width="80%"></div>
     
-  <button type="button" class="btn btn-primary btn-sm" 
+  <div id="bottom-bar">
+  <button type="button" class="btn btn-primary btn-sm"
   data-toggle="toggle" data-target="#demo">
 <i class="glyphicon glyphicon-plus">+</i>
 </button>
@@ -151,6 +167,7 @@
 
 </div>
 </div>
+  </div>
 </body> 
 
 
